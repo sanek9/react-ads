@@ -7,10 +7,13 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import TextField from '@material-ui/core/TextField';
 import Collapse from '@material-ui/core/Collapse';
 import classnames from 'classnames';
+import toolicon from '../icons/tool.svg'
 import burnIcon from '../icons/fire.svg'
 import alertIcon from '../icons/alert.svg'
+import medical from '../icons/medical.svg'
 
 
 
@@ -70,14 +73,27 @@ const styles = theme => ({
   </Grid>);
 };
 class Order extends Component {
-  state = { expanded: false };
+  state = { expanded: false, edit: false };
 
   handleExpandClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
   };
+  edit = () => {
+    if(this.state.edit){
+      let order = {...this.props.order, number:this.state.number};
+      console.log(order);
+      this.props.edit(order);
+    }
+    this.setState({...this.state, edit: !this.state.edit});
+  };
+  handleChange = name => event => {
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
 
   render() {
-    const { classes } = this.props;
+    const { classes , order } = this.props;
     return (
             // <Paper  >
       <Paper className={classes.paper} >
@@ -89,11 +105,28 @@ class Order extends Component {
               justify='space-between'
               alignItems='center'>
               <Grid item>
+                {this.state.edit?
+                  <TextField
+                    id="standard-number"
+                    ref="number"
+                    defaultValue={order.number}
+                    onChange={this.handleChange('number')}
+                    type="number"
+                    margin="normal"
+                  />
+                :
                 <Typography>
-                  {"N2132"}
+                  {order.number}
                 </Typography>
+                }
               </Grid>
               <Grid item>
+                <IconButton color="secondary" onClick={this.edit} className={classes.button} aria-label="Add an alarm">
+                  <img src={toolicon} width='24px' ></img>
+                </IconButton>
+                <IconButton color="secondary" className={classes.button} aria-label="Add an alarm">
+                  <img src={medical} width='24px' ></img>
+                </IconButton>
                 <IconButton color="secondary" className={classes.button} aria-label="Add an alarm">
                   <img src={burnIcon} width='24px' ></img>
                 </IconButton>
@@ -122,24 +155,30 @@ class Order extends Component {
               <Grid item container spacing={8}
                 md={7}>
                 <Grid item xs={12} md={6}>
-                  <Item name='Потребитель' text='Иванов Иван Иванович'/>
+                  <Item name='Потребитель' text={order.fio}/>
                 </Grid>
                 <Grid item xs={12}  md={6}>
-                  <Item name='Телефон' text='+375 xx xxx xx xx'/>
+                  <Item name='Телефон' text={order.phone}/>
                 </Grid>
                 <Grid item xs={12}  md={6}>
                   <Item name='Адрес' text='text фывф фывф авм фвыфыв'/>
                 </Grid>
                 <Grid item xs={12}  md={12}>
-                  <Item name='Характер извещения' text='text фывф фывф авм фвыфыв'/>
+                  <Item name='Характер извещения' text={order.description.name}/>
                 </Grid>
               </Grid>
               <Grid item
               xs={12}
               md={3}>
-                <Item name='Мастер' text='Иванов Иван Иванович'/>
-                <Item name='Слесарь' text='Иванов Иван Иванович'/>
-                <Item name='Водитель' text='Иванов Иван Иванович'/>
+                {(order.master && order.master.name)?
+                  <Item name='Мастер' text={order.master.name}/>:null
+                }
+                {(order.fitter && order.fitter.name)?
+                   <Item name='Слесарь' text={order.fitter.name}/>:null
+                }
+                {(order.driver && order.driver.name)?
+                  <Item name='Водитель' text={order.driver.name}/>:null
+                }
               </Grid>
               <Grid item md={12}>
               <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
@@ -153,8 +192,8 @@ class Order extends Component {
                 </Grid>
                 <Grid item
                   md={10}>
-                    <Item name='Обнаружено' text='text фывф фывф авм фвыфыв'/>
-                    <Item name='Выполнено' text='text фывф фывф авм фвыфыв'/>
+                    <Item name='Обнаружено' text={order.whatwas}/>
+                    <Item name='Выполнено' text={order.whatdo}/>
                     <Item name='Примечание' text='text фывф фывф авм фвыфыв'/>
                 </Grid>
                 </Grid>
