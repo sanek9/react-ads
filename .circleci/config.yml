@@ -16,8 +16,6 @@ jobs:
           debug: true 
           lint-dockerfile: false 
           treat-warnings-as-errors: false 
-          dockerfile: Dockerfile 
-          docker-context: . 
 workflows:
   example-workflow:
     jobs:
