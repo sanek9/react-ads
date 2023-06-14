@@ -17,7 +17,14 @@ jobs:
           debug: true 
           lint-dockerfile: false 
           treat-warnings-as-errors: false 
+  deploy:
+    machine: true
+    resource_class: sanek9/test
+    steps:
+      - run: echo "Hi I'm on a Container Runner!"
+      - run: docker-compose -p backend up -d
 workflows:
   example-workflow:
     jobs:
       - build
+      - deploy
